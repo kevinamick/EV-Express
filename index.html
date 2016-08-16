@@ -240,7 +240,6 @@
                                             map.fitBounds(bounds);
                                         });
                                     };
-
                                     function loadMarkers() {
                                         // load marker jSon data
                                         $.getJSON('https://developer.nrel.gov/api/alt-fuel-stations/v1.json?fuel_type=ELEC&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON', function (data) {
@@ -272,7 +271,6 @@
                                                 marker.addListener('click', function() {
                                                     infowindow.open(map, marker);
                                                 });
-
                                             });
                                         });
                                     }
