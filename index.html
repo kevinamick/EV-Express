@@ -231,6 +231,7 @@
 
                             bounds.extend(place.geometry.location);
                         }
+                        $('.pac-container').css('z-index', 9999);
                         map.fitBounds(bounds);
                     });
                 };
