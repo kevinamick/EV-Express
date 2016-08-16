@@ -14,7 +14,7 @@
         $(document).ready(function () {
             $('#fullpage').fullpage({
                 slidesColor: ['#428BCA', '#5CB85C', '#5BC0DE', '#F0AD4E', '#FF530D', '#FFFFFF'], // Bootstrap
-                anchors: ['home', 'map', 'aboutus', 'contact']
+                anchors: ['home', 'page', 'aboutus', 'contact']
                 , menu: '#menu'
             });
         });
@@ -262,6 +262,21 @@
                         });
                     });
                 }
+                google.maps.event.addDomListener(window, 'load', init_map);
+                window.blockMenuHeaderScroll = false;
+                $(window).on('touchstart', function (e) {
+                    if ($(e.target).closest('#mobileMenuHeader').length == 1) {
+                        blockMenuHeaderScroll = true;
+                    }
+                });
+                $(window).on('touchend', function () {
+                    blockMenuHeaderScroll = false;
+                });
+                $(window).on('touchmove', function (e) {
+                    if (blockMenuHeaderScroll) {
+                        e.preventDefault();
+                    }
+                });
             </script>
         </div>
         <div class="section" id="section2">
