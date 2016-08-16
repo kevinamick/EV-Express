@@ -190,14 +190,14 @@
                                     </style>
                                 <script type='text/javascript'>
                                     function init_map() {
+                                        var isDraggable = $(document).width() > 480 ? true : false; // If document (your website) is wider than 480px, isDraggable = true, else isDraggable = false
+                                        
                                         var myOptions = {
                                             zoom: 3
                                             , center: new google.maps.LatLng(41.850033, -87.6500523)
                                             , mapTypeId: google.maps.MapTypeId.ROADMAP
                                             , draggable: isDraggable
                                         };
-                                        
-                                        var isDraggable = $(document).width() > 480 ? true : false; // If document (your website) is wider than 480px, isDraggable = true, else isDraggable = false
                                         
                                         map = new google.maps.Map(document.getElementById('gmap_canvas'), myOptions);
                                         // load markers
