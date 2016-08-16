@@ -14,7 +14,7 @@
         $(document).ready(function () {
             $('#fullpage').fullpage({
                 slidesColor: ['#428BCA', '#5CB85C', '#5BC0DE', '#F0AD4E', '#FF530D', '#FFFFFF'], // Bootstrap
-                anchors: ['home', 'page', 'aboutus', 'contact']
+                anchors: ['home', 'map', 'aboutus', 'contact']
                 , menu: '#menu'
                 , normalScrollElements: '#gmap_canvas'
             });
@@ -170,7 +170,7 @@
                         <p>
                             <!--Welcome News...-->
                         </p>
-                        <p>Find electric vehicle charging stations near an address or ZIP code or along a route in the United States.
+                        <p> Find electric vehicle charging stations near an address or ZIP code or along a route in the United States.
                             <br> </p>
                     </div>
                 </div>
@@ -209,9 +209,7 @@
                         if (places.length == 0) {
                             return;
                         }
-
                         // For each place, get the icon, place name, and location.
-
                         var bounds = new google.maps.LatLngBounds();
                         for (var i = 0, place; place = places[i]; i++) {
                             var image = {
@@ -228,7 +226,6 @@
                                 , title: place.name
                                 , position: place.geometry.location
                             });
-
                             bounds.extend(place.geometry.location);
                         }
                         $('.pac-container').css('z-index', 9999);
