@@ -272,7 +272,7 @@
                     $.getJSON('https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=ELEC&latitude='+lat1+'&longitude='+lng1+'&radius=1000&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON', function (data) {
                         // loop all the markers
                         $.each(data.fuel_stations, function (i, item) {
-                            // Calculate distance from center
+
                             var myLatlng = new google.maps.LatLng(item.latitude, item.longitude);
                             
                                 // create new marker
