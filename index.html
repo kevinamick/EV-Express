@@ -187,6 +187,10 @@
                 }
             </style>
             <script type='text/javascript'>
+                var center;
+                var lat1;
+                var lng1;
+
                 function init_map() {
                     var myOptions = {
                         zoom: 10
@@ -209,17 +213,26 @@
                         // Browser doesn't support Geolocation
                         handleLocationError(false, infoWindow, map.getCenter());
                     }
-                    // load markers
-                    var center = map.getCenter;
-                    loadMarkers();
+                    
                     // Create the search box and link it to the UI element.
                     var input = document.getElementById('pac-input');
                     var searchBox = new google.maps.places.SearchBox(input);
                     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+                    
                     // Bias the SearchBox results towards current map's viewport.
                     map.addListener('bounds_changed', function () {
                         searchBox.setBounds(map.getBounds());
                     });
+                    
+                    google.maps.event.addListener(map, "center_changed", function () {
+                        center = map.getCenter();
+                        lat1 = center.lat();
+                        lng1 = center.lng();
+                        
+                        // load markers
+                        loadMarkers();
+                    });
+                    
                     google.maps.event.addListener(searchBox, 'places_changed', function () {
                         var places = searchBox.getPlaces();
                         if (places.length == 0) {
@@ -253,17 +266,33 @@
                     infoWindow.setPosition(pos);
                     infoWindow.setContent(browserHasGeolocation ? 'Error: The Geolocation service failed.' : 'Error: Your browser doesn\'t support geolocation.');
                 }
+                
+                function toRad(Value) {
+                    /** Converts numeric degrees to radians */
+                    return Value * Math.PI / 180;
+                }
 
-                function loadMarkers(center) {
+                function loadMarkers() {
                     // load marker jSon data
                     $.getJSON('https://developer.nrel.gov/api/alt-fuel-stations/v1.json?fuel_type=ELEC&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON', function (data) {
                         // loop all the markers
                         $.each(data.fuel_stations, function (i, item) {
-                            // add marker to map
-                            // create new marker location
+                            // Calculate distance from center
                             var myLatlng = new google.maps.LatLng(item.latitude, item.longitude);
+                            var R = 6371e3; // metres
+                            var φ1 = toRad(lat1);
+                            var φ2 = toRad(item.latitude);
+                            var Δφ = toRad((item.latitude-lat1));
+                            var Δλ = toRad((item.longitude-lng1));
+
+                            var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                                Math.cos(φ1) * Math.cos(φ2) *
+                                Math.sin(Δλ/2) * Math.sin(Δλ/2);
+                            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+                            var d = R * c;
                             
-                            
+                            if (d < 100000) {
                                 // create new marker
                                 var marker = new google.maps.Marker({
                                     id: item.id
@@ -279,6 +308,7 @@
                             marker.addListener('click', function () {
                                 infowindow.open(map, marker);
                             });
+                            }
                         });
                     });
                 }
