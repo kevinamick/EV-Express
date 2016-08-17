@@ -193,7 +193,7 @@
 
                 function init_map() {
                     var myOptions = {
-                        zoom: 10
+                        zoom: 15
                         , mapTypeId: google.maps.MapTypeId.ROADMAP
                     };
                     map = new google.maps.Map(document.getElementById('gmap_canvas'), myOptions);
@@ -274,25 +274,12 @@
 
                 function loadMarkers() {
                     // load marker jSon data
-                    $.getJSON('https://developer.nrel.gov/api/alt-fuel-stations/v1.json?fuel_type=ELEC&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON', function (data) {
+                    $.getJSON('https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=ELEC&latitude='+lat1+'&longitude='+lng1+'&radius=200&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON', function (data) {
                         // loop all the markers
                         $.each(data.fuel_stations, function (i, item) {
                             // Calculate distance from center
                             var myLatlng = new google.maps.LatLng(item.latitude, item.longitude);
-                            var R = 6371e3; // metres
-                            var φ1 = toRad(lat1);
-                            var φ2 = toRad(item.latitude);
-                            var Δφ = toRad((item.latitude-lat1));
-                            var Δλ = toRad((item.longitude-lng1));
-
-                            var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                                Math.cos(φ1) * Math.cos(φ2) *
-                                Math.sin(Δλ/2) * Math.sin(Δλ/2);
-                            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-                            var d = R * c;
                             
-                            if (d < 100000) {
                                 // create new marker
                                 var marker = new google.maps.Marker({
                                     id: item.id
@@ -308,7 +295,7 @@
                             marker.addListener('click', function () {
                                 infowindow.open(map, marker);
                             });
-                            }
+                            
                         });
                     });
                 }
