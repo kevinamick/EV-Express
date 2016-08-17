@@ -266,15 +266,10 @@
                     infoWindow.setPosition(pos);
                     infoWindow.setContent(browserHasGeolocation ? 'Error: The Geolocation service failed.' : 'Error: Your browser doesn\'t support geolocation.');
                 }
-                
-                function toRad(Value) {
-                    /** Converts numeric degrees to radians */
-                    return Value * Math.PI / 180;
-                }
 
                 function loadMarkers() {
                     // load marker jSon data
-                    $.getJSON('https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=ELEC&latitude='+lat1+'&longitude='+lng1+'&radius=200&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON', function (data) {
+                    $.getJSON('https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=ELEC&latitude='+lat1+'&longitude='+lng1+'&radius=1000&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON', function (data) {
                         // loop all the markers
                         $.each(data.fuel_stations, function (i, item) {
                             // Calculate distance from center
