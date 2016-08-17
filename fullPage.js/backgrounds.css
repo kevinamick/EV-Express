@@ -1,34 +1,39 @@
-.section{
-	text-align:center;
+.section {
+    text-align: center;
 }
 
 
 /* Sections
  * --------------------------------------- */
- #section0,
- #section1,
- #section2,
- #section3,
- #section4,
- .slide{
-	background-size: cover;
- }
- #section0{
-	background-image: url(/EV-Express/img/bg1.jpg);
- }
- #section1{
-	background-image: url(/EV-Express/img/bg2.jpg);
- }
- #section2{
-	background-image: url(/EV-Express/img/bg3.jpg);
- }
- 
- #section3{
-	background-image: url(/EV-Express/img/bg4.jpg);
- }
- #section4{
- 	background-image: url(/EV-Express/img/bg5.jpg);
- }
+
+#section0,
+#section1,
+#section2,
+#section3,
+#section4,
+.slide {
+    background-size: cover;
+}
+
+#section0 {
+    background-image: url(/EV-Express/img/bg1.jpg);
+}
+
+#section1 {
+    background-image: url(/EV-Express/img/bg2.jpg);
+}
+
+#section2 {
+    background-image: url(/EV-Express/img/bg3.jpg);
+}
+
+#section3 {
+    background-image: url(/EV-Express/img/bg4.jpg);
+}
+
+#section4 {
+    background-image: url(/EV-Express/img/bg5.jpg);
+}
 
 .section .bg-content {
     background-color: rgba(255, 255, 255, 0.5);
