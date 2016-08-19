@@ -139,7 +139,7 @@
 					<option value="NEMA1450">NEMA 14-50 (Level 1)</option>
 					<option value="J1772">J1772 (Level 2)</option>
 					<option value="CHADEMO">CHAdeMO (DC fast charging)</option>
-					<option value="J1772COMBO">	SAE J1772 Combo (DC fast charging)</option>
+					<option value="J1772COMBO"> SAE J1772 Combo (DC fast charging)</option>
 					<option value="TESLA">Tesla (DC fast charging)</option>
 				</select>
 			</div>
@@ -194,7 +194,7 @@
 					border-radius: 2px 0 0 2px;
 					box-sizing: border-box;
 					text-align: center;
-					font-family: 'Roboto','sans-serif';
+					font-family: 'Roboto', 'sans-serif';
 					height: 32px;
 					width: 150px;
 					padding-left: 10px;
@@ -216,7 +216,7 @@
 					border-radius: 2px 0 0 2px;
 					box-sizing: border-box;
 					text-align: center;
-					font-family: 'Roboto','sans-serif';
+					font-family: 'Roboto', 'sans-serif';
 					height: 32px;
 					width: 325px;
 					padding-left: 10px;
@@ -228,7 +228,6 @@
 				#c-type {
 					padding-top: 2px;
 				}
-				
 				
 				#type-selector {
 					color: #fff;
@@ -279,7 +278,6 @@
 					position: relative;
 					background: rgba(255, 255, 255, 0.9);
 				}
-				
 			</style>
 
 			<script type='text/javascript'>
@@ -287,6 +285,8 @@
 				var lat1;
 				var lng1;
 				var map;
+				
+
 
 				function init_map() {
 
@@ -319,20 +319,23 @@
 
 					var directionsService = new google.maps.DirectionsService;
 					var directionsDisplay = new google.maps.DirectionsRenderer;
+					var service = new google.maps.DistanceMatrixService();
 					directionsDisplay.setMap(map);
 					directionsDisplay.setPanel(document.getElementById('dir-panel'));
 
 					// Create the search box and link it to the UI element.
 					var origin_input = document.getElementById('origin-input');
 					var destination_input = document.getElementById('destination-input');
-					var bat_input = document.getElementById('bat');
-					var c_input = document.getElementById('connect');
+					var bat_display = document.getElementById('bat');
+					var c_display = document.getElementById('connect');
+					var bat_input = document.getElementById('bat-lvl');
+					var c_input = document.getElementById('c-type');
 
 
 					map.controls[google.maps.ControlPosition.TOP_CENTER].push(origin_input);
 					map.controls[google.maps.ControlPosition.TOP_CENTER].push(destination_input);
-					map.controls[google.maps.ControlPosition.TOP_CENTER].push(bat_input);
-					map.controls[google.maps.ControlPosition.TOP_CENTER].push(c_input);
+					map.controls[google.maps.ControlPosition.TOP_CENTER].push(bat_display);
+					map.controls[google.maps.ControlPosition.TOP_CENTER].push(c_display);
 					map.controls[google.maps.ControlPosition.LEFT].push(document.getElementById('dir-panel'));
 
 
@@ -359,24 +362,34 @@
 							map.setZoom(17);
 						}
 					}
+					
+					var o_place;
+					var o_LtLnG;
 
 					origin_autocomplete.addListener('place_changed', function () {
-						var place = origin_autocomplete.getPlace();
-						if (!place.geometry) {
+						o_place = origin_autocomplete.getPlace();
+						var lat = o_place.geometry.location.lat();
+						var lng = o_place.geometry.location.lng();
+						o_LtLnG = new google.maps.LatLng(lat, lng);
+						if (!o_place.geometry) {
 							window.alert("Autocomplete's returned place contains no geometry");
 							return;
 						}
-						expandViewportToFitPlace(map, place);
+						expandViewportToFitPlace(map, o_place);
 
 						// If the place has a geometry, store its place ID and route if we have
 						// the other place ID
-						origin_place_id = place.place_id;
+						origin_place_id = o_place.place_id;
 						route(origin_place_id, destination_place_id,
 							directionsService, directionsDisplay);
 					});
 
 					destination_autocomplete.addListener('place_changed', function () {
 						var place = destination_autocomplete.getPlace();
+						var lat = place.geometry.location.lat();
+						var lng = place.geometry.location.lng();
+						var d_LtLnG = new google.maps.LatLng(lat, lng);
+					    
 						if (!place.geometry) {
 							window.alert("Autocomplete's returned place contains no geometry");
 							return;
@@ -386,6 +399,40 @@
 						// If the place has a geometry, store its place ID and route if we have
 						// the other place ID
 						destination_place_id = place.place_id;
+						
+						service.getDistanceMatrix({
+							origins: [o_LtLnG],
+							destinations: [d_LtLnG],
+							travelMode: 'DRIVING'
+						}, callback);
+
+						
+						
+						function callback(response, status) {
+							var distance;
+							var duration;
+							
+							if (status == 'OK') {
+								var origins = response.originAddresses;
+								var destinations = response.destinationAddresses;
+								
+								for (var i = 0; i < origins.length; i++) {
+									var results = response.rows[i].elements;
+									console.log(results);
+									for (var j = 0; j < results.length; j++) {
+										var element = results[j];
+										distance = element.distance.text;
+										duration = element.duration.text;
+									}
+								}
+							}
+							
+							
+						}
+						
+						
+						
+						
 						route(origin_place_id, destination_place_id,
 							directionsService, directionsDisplay);
 					});
@@ -395,6 +442,7 @@
 						if (!origin_place_id || !destination_place_id) {
 							return;
 						}
+
 						directionsService.route({
 							origin: {
 								'placeId': origin_place_id
