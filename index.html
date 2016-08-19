@@ -120,9 +120,29 @@
 		</div>
 		<div class="section" id="section1 map">
 
-
 			<input id="origin-input" class="controls" type="text" placeholder="Enter an origin location">
 			<input id="destination-input" class="controls" type="text" placeholder="Enter a destination location">
+			<div id="bat" class="col-sm-1">
+				<strong>Battery Level:</strong>
+				<select id="bat-lvl">
+					<option value="1/4">1/4</option>
+					<option value="1/2">1/2</option>
+					<option value="3/4">3/4</option>
+					<option value="full">Full</option>
+				</select>
+			</div>
+			<div id="connect">
+				<strong>Connector Type:</strong>
+				<select id="c-type">
+					<option value="NEMA515">NEMA 5-15 (Level 1)</option>
+					<option value="NEMA520">NEMA 5-20 (Level 1)</option>
+					<option value="NEMA1450">NEMA 14-50 (Level 1)</option>
+					<option value="J1772">J1772 (Level 2)</option>
+					<option value="CHADEMO">CHAdeMO (DC fast charging)</option>
+					<option value="J1772COMBO">	SAE J1772 Combo (DC fast charging)</option>
+					<option value="TESLA">Tesla (DC fast charging)</option>
+				</select>
+			</div>
 			<div id="dir-panel"></div>
 			<div id='gmap_canvas'></div>
 
@@ -139,6 +159,7 @@
 					box-sizing: border-box;
 					-moz-box-sizing: border-box;
 					height: 32px;
+					width: 100%;
 					outline: none;
 					box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 				}
@@ -164,6 +185,50 @@
 					border-color: #4d90fe;
 				}
 				
+				#bat {
+					margin-top: 60px;
+					margin-left: 12px;
+					z-index: 5;
+					padding: 5px;
+					border: 1px solid transparent;
+					border-radius: 2px 0 0 2px;
+					box-sizing: border-box;
+					text-align: center;
+					font-family: 'Roboto','sans-serif';
+					height: 32px;
+					width: 150px;
+					padding-left: 10px;
+					outline: none;
+					background: rgba(255, 255, 255, 0.8);
+					box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+				}
+				
+				#bat-lvl {
+					padding-top: 2px;
+				}
+				
+				#connect {
+					margin-top: 60px;
+					margin-left: 12px;
+					z-index: 6;
+					padding: 5px;
+					border: 1px solid transparent;
+					border-radius: 2px 0 0 2px;
+					box-sizing: border-box;
+					text-align: center;
+					font-family: 'Roboto','sans-serif';
+					height: 32px;
+					width: 325px;
+					padding-left: 10px;
+					outline: none;
+					background: rgba(255, 255, 255, 0.8);
+					box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+				}
+				
+				#c-type {
+					padding-top: 2px;
+				}
+				
 				
 				#type-selector {
 					color: #fff;
@@ -185,10 +250,9 @@
 					font-family: 'Roboto', 'sans-serif';
 					line-height: 30px;
 					padding-left: 10px;
-					margin-top: 10px;
+					margin-top: 50px;
 					border: 1px solid transparent;
 					border-radius: 2px 0 0 2px;
-					margin-left: 100px;
 				}
 				
 				#dir-panel select,
@@ -215,6 +279,7 @@
 					position: relative;
 					background: rgba(255, 255, 255, 0.9);
 				}
+				
 			</style>
 
 			<script type='text/javascript'>
@@ -260,10 +325,14 @@
 					// Create the search box and link it to the UI element.
 					var origin_input = document.getElementById('origin-input');
 					var destination_input = document.getElementById('destination-input');
+					var bat_input = document.getElementById('bat');
+					var c_input = document.getElementById('connect');
 
 
-					map.controls[google.maps.ControlPosition.TOP_LEFT].push(origin_input);
-					map.controls[google.maps.ControlPosition.TOP_LEFT].push(destination_input);
+					map.controls[google.maps.ControlPosition.TOP_CENTER].push(origin_input);
+					map.controls[google.maps.ControlPosition.TOP_CENTER].push(destination_input);
+					map.controls[google.maps.ControlPosition.TOP_CENTER].push(bat_input);
+					map.controls[google.maps.ControlPosition.TOP_CENTER].push(c_input);
 					map.controls[google.maps.ControlPosition.LEFT].push(document.getElementById('dir-panel'));
 
 
