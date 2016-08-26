@@ -405,54 +405,54 @@
 							}
 							//If the distance is within the charge limit, give route.
 							//Else, find charging station(s) in between.
-							if (bat_input == 'Full') {
+							if (bat_input == 'full') {
 								if (distance < 200000) {
 									findPoint = false;
-									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint);
+									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint, bat_input, distance);
 								}
 								else {
 									//Will find charging station(s) along the route
 									findPoint = true;
-									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint);
+									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint, bat_input, distance);
 								}
 							}
 							else if (bat_input == '3/4') {
 								if (distance < 150000) {
 									findPoint = false;
-									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint);
+									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint, bat_input, distance);
 								}
 								else {
 									//Will find charging station(s) along the route
 									findPoint = true;
-									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint);
+									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint, bat_input, distance);
 								}
 							}
 							else if (bat_input == '1/2') {
 								if (distance < 100000) {
 									findPoint = false;
-									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint);
+									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint, bat_input, distance);
 								}
 								else {
 									//Will find charging station(s) along the route
 									findPoint = true;
-									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint);
+									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint, bat_input, distance);
 								}
 							}
 							else {
 								if (distance < 50000) {
 									findPoint = false;
-									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint);
+									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint, bat_input, distance);
 								}
 								else {
 									//Will find charging station(s) along the route
 									findPoint = true;
-									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint);
+									route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint, bat_input, distance);
 								}
 							}
 						}
 					});
 					//Calculate route
-					function route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint) {
+					function route(origin_place_id, destination_place_id, directionsService, directionsDisplay, findPoint, bat_input, distance) {
 						var midLat;
 						var midLng;
 						var way = [];
@@ -488,46 +488,67 @@
 								, travelMode: 'DRIVING'
 							}, function (response, status) {
 								if (status === 'OK') {
-									directionsDisplay.setDirections(response);
+									bat_input = document.getElementById('bat-lvl').value;
 									var pointsArray = [];
+									var seg = [];
 									pointsArray = response.routes[0].overview_path;
-									var middle = Math.round((pointsArray.length) / 2);
-									console.log(pointsArray[middle].lat());
-									console.log(middle);
-									midLat = pointsArray[middle].lat();
-									midLng = pointsArray[middle].lng();
-									findPoint(midLat,midLng);
+									directionsDisplay.setDirections(response);
+									console.log(bat_input);
+									if (bat_input == 'full') {
+										var n = distance / 200000;
+										var section = (pointsArray.length - 1) / (n - 1);
+										for (var i = 0; i < n; i++) {
+											var num = Math.round(Math.floor(section * i));
+
+											seg[i] = num;
+
+										}
+
+										findPoint(pointsArray, seg);
+									}
 								}
 								else {
 									window.alert('Directions request failed due to ' + status);
 								}
 							});
-							var findPoint = function (midLat, midLng) {
-								$.getJSON('https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=ELEC&latitude=' + midLat + '&longitude=' + midLng + '&radius=20&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON&limit=1', function (data) {
-									wayLat = data.latitude;
-									wayLng = data.longitude;
-									console.log(wayLat);
-									way.push({
-										location: new google.maps.LatLng(wayLat, wayLng)
-										, stopover: true
+							var findPoint = function (pointsArray, seg) {
+								for (var i = 1; i < seg.length-1; i++) {
+									console.log(seg[i]);
+										var lat = pointsArray[seg[i]].lat();
+										var lng = pointsArray[seg[i]].lng();
+									
+									$.getJSON('https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=ELEC&latitude=' + lat + '&longitude=' + lng + '&radius=20&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON&limit=1', function (data) {
+										wayLat = data.latitude;
+										wayLng = data.longitude;
+										console.log(wayLat);
+										console.log(wayLng);
+										way.push({
+											location: new google.maps.LatLng(wayLat, wayLng)
+											, stopover: true
+										});
 									});
-									directionsService.route({
-										origin: {
-											'placeId': origin_place_id
-										}
-										, destination: {
-											'placeId': destination_place_id
-										}
-										, waypoints: way
-										, travelMode: 'DRIVING'
-									}, function (response, status) {
-										if (status === 'OK') {
-											directionsDisplay.setDirections(response);
-										}
-										else {
-											window.alert('Directions request failed due to ' + status);
-										}
-									});
+								}
+								
+								finalRoute(way);
+							}
+							var finalRoute = function (way) {
+								console.log(way);
+								directionsService.route({
+									origin: {
+										'placeId': origin_place_id
+									}
+									, destination: {
+										'placeId': destination_place_id
+									}
+									, waypoints: way
+									, travelMode: 'DRIVING'
+								}, function (response, status) {
+									if (status === 'OK') {
+										directionsDisplay.setDirections(response);
+									}
+									else {
+										window.alert('Directions request failed due to ' + status);
+									}
 								});
 							}
 						}
