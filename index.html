@@ -395,7 +395,7 @@
 								var destinations = response.destinationAddresses;
 								for (var i = 0; i < origins.length; i++) {
 									var results = response.rows[i].elements;
-									console.log(results);
+							
 									for (var j = 0; j < results.length; j++) {
 										var element = results[j];
 										distance = element.distance.value;
@@ -493,7 +493,7 @@
 									var seg = [];
 									pointsArray = response.routes[0].overview_path;
 									directionsDisplay.setDirections(response);
-									console.log(bat_input);
+						
 									if (bat_input == 'full') {
 										var n = distance / 200000;
 										var section = (pointsArray.length - 1) / (n - 1);
@@ -510,30 +510,29 @@
 							});
 							var findPoint = function (pointsArray, seg) {
 								for (var i = 1; i < seg.length - 1; i++) {
-									console.log(seg[i]);
+				
 									var lat = pointsArray[seg[i]].lat();
 									var lng = pointsArray[seg[i]].lng();
+									
 									$.ajax({
-										url: 'https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=ELEC&latitude=' + lat + '&longitude=' + lng + '&radius=20&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON&limit=1'
+										url: 'https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=ELEC&latitude=' + lat + '&longitude=' + lng + '&radius=500&api_key=PbhPOEFCBL7tQBv3YoW0G8yyfdymUMD5Ng0u0pRJ&format=JSON&limit=1'
 										, type: 'GET'
 										, dataType: 'json'
 										, async: false
 										, success: function (data) {
-											wayLat = data.latitude;
-											wayLng = data.longitude;
-											console.log(wayLat);
-											console.log(wayLng);
+											wayLat = data.fuel_stations.latitude;
+											wayLng = data.fuel_stations.longitude;
 											way.push({
 												location: new google.maps.LatLng(wayLat, wayLng)
 												, stopover: true
 											});
+											console.log(wayLat);
 										}
 									});
 								}
 								finalRoute(way);
 							}
 							var finalRoute = function (way) {
-								console.log(way);
 								directionsService.route({
 									origin: {
 										'placeId': origin_place_id
