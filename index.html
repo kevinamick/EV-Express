@@ -520,17 +520,17 @@
 										, dataType: 'json'
 										, async: false
 										, success: function (data) {
-											wayLat = data.fuel_stations.latitude;
-											wayLng = data.fuel_stations.longitude;
+											wayLat = data.fuel_stations[0].latitude;
+											wayLng = data.fuel_stations[0].longitude;
 											way.push({
 												location: new google.maps.LatLng(wayLat, wayLng)
 												, stopover: true
 											});
-											console.log(wayLat);
 										}
 									});
 								}
 								finalRoute(way);
+								console.log(way);
 							}
 							var finalRoute = function (way) {
 								directionsService.route({
